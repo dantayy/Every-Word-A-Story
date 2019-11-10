@@ -1,5 +1,25 @@
 "use strict";
 
+// users can't make words longer than this
+var maxWordLength = 30;
+
+var handleDomoView = function handleDomoView(e) {
+    if (e.target.value === "all") {
+        loadAllDomosFromServer();
+    } else {
+        loadDomosFromServer();
+    }
+};
+
+//change the display from all words to user's words & vice versa
+var handleWordView = function handleWordView(e) {
+    if (e.target.value === "all") {
+        loadAllWordsFromServer();
+    } else {
+        loadWordsFromServer();
+    }
+};
+
 var handleDomo = function handleDomo(e) {
     e.preventDefault();
 
@@ -17,12 +37,28 @@ var handleDomo = function handleDomo(e) {
     return false;
 };
 
-var handleView = function handleView(e) {
-    if (e.target.value === "all") {
-        loadAllDomosFromServer();
-    } else {
-        loadDomosFromServer();
+// func for handling a string the user wants to add to the story
+var handleWord = function handleWord(e) {
+    e.preventDefault();
+
+    $("#domoMessage").animate({ width: "hide" }, 350);
+
+    if ($("#wordText").val() === "") {
+        handleError("RAWR!  Need to put in a word!");
+        return false;
+    } else if ($("#wordText").length > maxWordLength) {
+        handleError("RAWR!  Word is too long!");
+        return false;
+    } else if ($("#wordText").index(' ') !== -1) {
+        handleError("RAWR!  Can't put in multiple words!");
+        return false;
     }
+
+    sendAjax("POST", $("#wordForm").attr("action"), $("#wordForm").serialize(), function () {
+        loadAllWordsFromServer();
+    });
+
+    return false;
 };
 
 var DomoForm = function DomoForm(props) {
@@ -49,6 +85,22 @@ var DomoForm = function DomoForm(props) {
         React.createElement("input", { id: "domoImage", type: "text", name: "image", placeholder: "Domo Image URL" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
         React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+    );
+};
+
+// React form for submitting a word to the story
+var WordForm = function WordForm(props) {
+    return React.createElement(
+        "form",
+        { id: "wordForm", onSubmit: handleWord, name: "wordForm", action: "/maker", method: "POST", className: "domoForm" },
+        React.createElement(
+            "label",
+            { htmlFor: "text" },
+            "Word: "
+        ),
+        React.createElement("input", { id: "wordText", type: "text", name: "text", placeholder: "One Word Only!" }),
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Add Word" })
     );
 };
 
@@ -92,6 +144,36 @@ var DomoList = function DomoList(props) {
     );
 };
 
+// React list that will display the story so far
+var WordList = function WordList(props) {
+    if (props.words.length === 0) {
+        return React.createElement(
+            "div",
+            { className: "domoList" },
+            React.createElement(
+                "h3",
+                { className: "emptyDomo" },
+                "No words yet"
+            )
+        );
+    }
+
+    var wordNodes = props.words.map(function (word) {
+        return React.createElement(
+            "span",
+            { key: word._id, color: word.color },
+            word.text,
+            " "
+        );
+    });
+
+    return React.createElement(
+        "div",
+        { className: "domoList" },
+        wordNodes
+    );
+};
+
 var DomoView = function DomoView(props) {
     return React.createElement(
         "form",
@@ -101,13 +183,33 @@ var DomoView = function DomoView(props) {
             { htmlFor: "view" },
             "View All Domos - "
         ),
-        React.createElement("input", { type: "radio", onClick: handleView, name: "view", value: "all" }),
+        React.createElement("input", { type: "radio", onClick: handleDomoView, name: "view", value: "all" }),
         React.createElement(
             "label",
             { htmlFor: "view" },
             "View Your Domos - "
         ),
-        React.createElement("input", { type: "radio", onClick: handleView, name: "view", value: "user", defaultChecked: true })
+        React.createElement("input", { type: "radio", onClick: handleDomoView, name: "view", value: "user", defaultChecked: true })
+    );
+};
+
+// React form for choosing to display the entire story or just a user's story
+var WordView = function WordView(props) {
+    return React.createElement(
+        "form",
+        { id: "domoView", name: "wordView", className: "domoForm" },
+        React.createElement(
+            "label",
+            { htmlFor: "view" },
+            "View All Words - "
+        ),
+        React.createElement("input", { type: "radio", onClick: handleWordView, name: "view", value: "all", defaultChecked: true }),
+        React.createElement(
+            "label",
+            { htmlFor: "view" },
+            "View Your Words - "
+        ),
+        React.createElement("input", { type: "radio", onClick: handleWordView, name: "view", value: "user" })
     );
 };
 
@@ -117,20 +219,34 @@ var loadDomosFromServer = function loadDomosFromServer() {
     });
 };
 
+// func for rendering a user's set of words to the screen
+var loadWordsFromServer = function loadWordsFromServer() {
+    sendAjax("GET", "/getWords", null, function (data) {
+        ReactDOM.render(React.createElement(WordList, { words: data.words }), document.querySelector("#words"));
+    });
+};
+
 var loadAllDomosFromServer = function loadAllDomosFromServer() {
     sendAjax("GET", "/getAllDomos", null, function (data) {
         ReactDOM.render(React.createElement(DomoList, { domos: data.domos }), document.querySelector("#domos"));
     });
 };
 
+// func for rendering all words to the screen
+var loadAllWordsFromServer = function loadAllWordsFromServer() {
+    sendAjax("GET", "/getAllWords", null, function (data) {
+        ReactDOM.render(React.createElement(WordList, { words: data.words }), document.querySelector("#words"));
+    });
+};
+
 var setup = function setup(csrf) {
-    ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+    ReactDOM.render(React.createElement(WordForm, { csrf: csrf }), document.querySelector("#makeWord"));
 
-    ReactDOM.render(React.createElement(DomoView, null), document.querySelector("#domoView"));
+    ReactDOM.render(React.createElement(WordView, null), document.querySelector("#wordView"));
 
-    ReactDOM.render(React.createElement(DomoList, { domos: [] }), document.querySelector("#domos"));
+    ReactDOM.render(React.createElement(WordList, { words: [] }), document.querySelector("#words"));
 
-    loadDomosFromServer();
+    loadAllWordsFromServer();
 };
 
 var getToken = function getToken() {

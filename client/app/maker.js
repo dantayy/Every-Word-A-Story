@@ -42,13 +42,13 @@ const handleWord = (e) => {
 
     $(`#domoMessage`).animate({width:`hide`}, 350);
 
-    if($(`#word`).val() === ``) {
+    if($(`#wordText`).val() === ``) {
         handleError(`RAWR!  Need to put in a word!`);
         return false;
-    } else if ($(`#word`).length() > maxWordLength) {
+    } else if ($(`#wordText`).length > maxWordLength) {
         handleError(`RAWR!  Word is too long!`);
         return false;
-    } else if ($(`#word`).index(' ') !== -1) {
+    } else if ($(`#wordText`).index(' ') !== -1) {
         handleError(`RAWR!  Can't put in multiple words!`);
         return false;
     }
@@ -71,6 +71,18 @@ const DomoForm = (props) => {
         <input id="domoImage" type="text" name="image" placeholder="Domo Image URL" />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+        </form>
+    );
+};
+
+// React form for submitting a word to the story
+const WordForm = (props) => {
+    return (
+        <form id="wordForm" onSubmit={handleWord} name="wordForm" action="/maker" method="POST" className="domoForm">
+        <label htmlFor="text">Word: </label>
+        <input id="wordText" type="text" name="text" placeholder="One Word Only!" />
+        <input type="hidden" name="_csrf" value={props.csrf} />
+        <input className="makeDomoSubmit" type="submit" value="Add Word" />
         </form>
     );
 };
@@ -101,6 +113,7 @@ const DomoList = (props) => {
     );
 };
 
+// React list that will display the story so far
 const WordList = (props) => {
     if(props.words.length === 0) {
         return(
@@ -134,13 +147,14 @@ const DomoView = (props) => {
     );
 };
 
+// React form for choosing to display the entire story or just a user's story
 const WordView = (props) => {
     return (
         <form id="domoView" name="wordView" className="domoForm">
         <label htmlFor="view">View All Words - </label>
-        <input type="radio" onClick={handleWordView} name="view" value="all" />
+        <input type="radio" onClick={handleWordView} name="view" value="all" defaultChecked />
         <label htmlFor="view">View Your Words - </label>
-        <input type="radio" onClick={handleWordView} name="view" value="user" defaultChecked />
+        <input type="radio" onClick={handleWordView} name="view" value="user" />
         </form>
     );
 };
@@ -154,6 +168,7 @@ const loadDomosFromServer = () => {
     });
 };
 
+// func for rendering a user's set of words to the screen
 const loadWordsFromServer = () => {
     sendAjax(`GET`, `/getWords`, null, (data) => {
         ReactDOM.render(
@@ -172,6 +187,7 @@ const loadAllDomosFromServer = () => {
     });
 };
 
+// func for rendering all words to the screen
 const loadAllWordsFromServer = () => {
     sendAjax(`GET`, `/getAllWords`, null, (data) => {
         ReactDOM.render(
@@ -183,21 +199,21 @@ const loadAllWordsFromServer = () => {
 
 const setup = (csrf) => {
     ReactDOM.render(
-        <DomoForm csrf={csrf} />,
-        document.querySelector(`#makeDomo`)
+        <WordForm csrf={csrf} />,
+        document.querySelector(`#makeWord`)
     );
 
     ReactDOM.render(
-        <DomoView />,
-        document.querySelector(`#domoView`)
+        <WordView />,
+        document.querySelector(`#wordView`)
     );
 
     ReactDOM.render(
-        <DomoList domos={[]} />,
-        document.querySelector(`#domos`)
+        <WordList words={[]} />,
+        document.querySelector(`#words`)
     );
 
-    loadDomosFromServer();
+    loadAllWordsFromServer();
 };
 
 const getToken = () => {
