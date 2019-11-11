@@ -21,10 +21,10 @@ var handleWord = function handleWord(e) {
     if ($("#wordText").val() === "") {
         handleError("Need to put in a word!");
         return false;
-    } else if ($("#wordText").length > maxWordLength) {
+    } else if ($("#wordText").val().length > maxWordLength) {
         handleError("Word is too long!");
         return false;
-    } else if ($("#wordText").index(' ') !== -1) {
+    } else if ($("#wordText").val().indexOf(" ") >= 0) {
         handleError("Can't put in multiple words!");
         return false;
     }

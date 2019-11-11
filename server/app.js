@@ -25,10 +25,10 @@ mongoose.connect(dbURL, (err) => {
 
 let redisURL = {
   hostname: 'redis-13810.c10.us-east-1-2.ec2.cloud.redislabs.com', // hostname from the RedisLabs
-  port: 13810, //your port from the RedisLabs
+  port: 13810, // your port from the RedisLabs
 };
 
-let redisPASS = '191MlBHQGWR1oSxp0JrebJ22FyWf9Wtk';  // password from RedisLABS
+let redisPASS = '191MlBHQGWR1oSxp0JrebJ22FyWf9Wtk'; // password from RedisLABS
 
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
