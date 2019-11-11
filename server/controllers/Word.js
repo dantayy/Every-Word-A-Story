@@ -1,5 +1,7 @@
+// require the models folder to access all models
 const models = require('../models');
 
+// grab the Word model for use in here
 const Word = models.Word;
 
 // renders the default app page with all words loaded
@@ -14,23 +16,31 @@ const makerPage = (req, res) => {
     });
 };
 
+// make a new word based on the text parsed and account signed in
 const makeWord = (req, res) => {
+    // stop if somehow no word was submitted
     if (!req.body.text) {
-        return res.status(400).json({ error: 'RAWR! All fields are required' });
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+    // stop if the user's post timeout hasn't ended yet
+    else if(Date.now() - req.session.account.timeBetweenPosts < req.session.account.lastPosted){
+        return res.status(400).json({ error: `Your post timeout isn't over yet, please wait` });
     }
 
+    // build a new word with data provided
     const wordData = {
         text: req.body.text,
         owner: req.session.account._id,
         color: req.session.account.color,
     };
-
     const newWord = new Word.WordModel(wordData);
-
     const wordPromise = newWord.save();
-
-    wordPromise.then(() => res.json({ redirect: '/maker' }));
-
+    // update the account's lastPosted property and reload the page after successful submission
+    wordPromise.then(() => {
+        req.session.account.lastPosted = Date.now();
+        res.json({ redirect: '/maker' });
+    });
+    // catch errors
     wordPromise.catch((err) => {
         console.log(err);
 
@@ -40,10 +50,10 @@ const makeWord = (req, res) => {
 
         return res.status(400).json({ error: 'An error occurred' });
     });
-
     return wordPromise;
 };
 
+// get words made by the user currently signed in
 const getWords = (req, res) => Word.WordModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
         console.log(err);
@@ -53,6 +63,8 @@ const getWords = (req, res) => Word.WordModel.findByOwner(req.session.account._i
     return res.json({ words: docs });
 });
 
+
+// get words made by all users
 const getAllWords = (req, res) => Word.WordModel.find({}, (err, docs) => {
     if (err) {
         console.log(err);
@@ -62,6 +74,7 @@ const getAllWords = (req, res) => Word.WordModel.find({}, (err, docs) => {
     return res.json({ words: docs });
 });
 
+// export relevant functions for the router
 module.exports.makerPage = makerPage;
 module.exports.getWords = getWords;
 module.exports.getAllWords = getAllWords;

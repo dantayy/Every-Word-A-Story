@@ -36,6 +36,18 @@ const AccountSchema = new mongoose.Schema({
             luminosity: `bright`,
         }),
     },
+    timeBetweenPosts: {
+        type: Number,
+        required: true,
+        default: 10000 //stored in ms, 60000ms == 1 minute
+    },
+    lastPosted: {
+        type: Date,
+        required: true,
+        default: {
+            $subtract: [Date.now, 10000] // second val MUST be equal to timeBetweenPosts default
+        }
+    },
 });
 
 AccountSchema.statics.toAPI = doc => ({
@@ -43,6 +55,8 @@ AccountSchema.statics.toAPI = doc => ({
     username: doc.username,
     _id: doc._id,
     color: doc.color,
+    timeBetweenPosts: doc.timeBetweenPosts,
+    lastPosted: doc.lastPosted,
 });
 
 const validatePassword = (doc, password, callback) => {

@@ -1,5 +1,6 @@
 "use strict";
 
+// function for handling login
 var handleLogin = function handleLogin(e) {
     e.preventDefault();
 
@@ -17,6 +18,7 @@ var handleLogin = function handleLogin(e) {
     return false;
 };
 
+// function for handling signup
 var handleSignup = function handleSignup(e) {
     e.preventDefault();
 
@@ -37,6 +39,7 @@ var handleSignup = function handleSignup(e) {
     return false;
 };
 
+// React form for user login
 var LoginWindow = function LoginWindow(props) {
     return React.createElement(
         "form",
@@ -58,6 +61,7 @@ var LoginWindow = function LoginWindow(props) {
     );
 };
 
+// React form for user signup
 var SignupWindow = function SignupWindow(props) {
     return React.createElement(
         "form",
@@ -93,6 +97,7 @@ var createSignupWindow = function createSignupWindow(csrf) {
     ReactDOM.render(React.createElement(SignupWindow, { csrf: csrf }), document.querySelector("#content"));
 };
 
+// set up the login/signup page and buttons
 var setup = function setup(csrf) {
     var loginButton = document.querySelector("#loginButton");
     var signupButton = document.querySelector("#signupButton");
@@ -112,27 +117,32 @@ var setup = function setup(csrf) {
     createLoginWindow(csrf); // default view
 };
 
+// get a csrf token and begin setup of page with it
 var getToken = function getToken() {
     sendAjax("GET", "/getToken", null, function (result) {
         setup(result.csrfToken);
     });
 };
 
+// called when page loads
 $(document).ready(function () {
     getToken();
 });
 "use strict";
 
+// function for handling errors
 var handleError = function handleError(message) {
     $("#errorMessage").text(message);
     $("#domoMessage").animate({ width: "toggle" }, 350);
 };
 
+// function for redirecting
 var redirect = function redirect(response) {
     $("#domoMessage").animate({ width: "hide" }, 350);
     window.location = response.redirect;
 };
 
+// function for sending ajax to the server
 var sendAjax = function sendAjax(type, action, data, success) {
     $.ajax({
         cache: false,
