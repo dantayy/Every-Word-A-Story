@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const mongoose = require('mongoose');
-const randomColor = require('randomcolor');
 
 mongoose.Promise = global.Promise;
 
@@ -32,7 +31,7 @@ const AccountSchema = new mongoose.Schema({
   color: {
     type: String,
     required: true,
-    default: `black`,
+    default: 'black',
   },
   timeBetweenPosts: {
     type: Number,
