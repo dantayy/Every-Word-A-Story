@@ -44,7 +44,7 @@ WordSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return WordModel.find(search).select('name age image').exec(callback);
+  return WordModel.find(search).select('text').exec(callback);
 };
 
 WordModel = mongoose.model('Word', WordSchema);
