@@ -32,19 +32,15 @@ const AccountSchema = new mongoose.Schema({
   color: {
     type: String,
     required: true,
-    default: randomColor({
-      luminosity: 'bright',
-    }),
+    default: `black`,
   },
   timeBetweenPosts: {
     type: Number,
     required: true,
-    default: 10000, // stored in ms, 60000ms == 1 minute
   },
   lastPosted: {
     type: Date,
     required: true,
-    default: Date(Date.now() - 10000), // subtrahend MUST be equal to default timeBetweenPoints
   },
 });
 
