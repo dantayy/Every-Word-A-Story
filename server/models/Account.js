@@ -44,9 +44,7 @@ const AccountSchema = new mongoose.Schema({
   lastPosted: {
     type: Date,
     required: true,
-    default: {
-      $subtract: [Date.now, 10000], // second val MUST be equal to timeBetweenPosts default
-    },
+    default: Date(Date.now() - 10000), // subtrahend MUST be equal to default timeBetweenPoints
   },
 });
 
