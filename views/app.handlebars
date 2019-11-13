@@ -1,29 +1,64 @@
 <html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>DomoMaker</title>
-  <script crossorigin src="https://unpkg.com/react@15/dist/react.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
-  <script crossorigin src="https://unpkg.com/prop-types/prop-types.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
-  <link rel="shortcut icon" href="/assets/img/favicon.png"/>
-  <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
-</head>
-<body>
-  <nav><a href="/login"><img id="logo" src="/assets/img/face.png" alt="face logo"/></a>
-    <div class="navlink"><a href="/logout">Log out</a></div>
-  </nav>
-  <section id="makeWord">
-  </section>
-  <section id="wordView">
-  </section>
-  <section id="words">
-  </section>
-  <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage"></span></h3><img id="domo" src="assets/img/domo.png" alt="domo"/>
-  </div>
-  <script src="/assets/bundle.js"></script>
-</body>
+    <head>
+        <!-- Required meta tags for bootstrap -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">        
+        <title>Every Word A Story</title>
+        <!-- bootstrap css -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script crossorigin src="https://unpkg.com/react@15/dist/react.min.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+        <script crossorigin src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
+        <link rel="shortcut icon" href="/assets/img/favicon.png"/>
+        <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <p>Username</p>
+                    <a href="/logout">Log out</a>
+                    <p>Change Password</p>
+                </div>
+                <div class="col-6">
+                    <h1>Every Word A Story</h1>
+                </div>
+                <div class="col-3">
+                    <p>View Whole Story</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <p>Ad</p>
+                </div>
+                <div class="col-6">
+                    <section id="words">
+                    </section>
+                </div>
+                <div class="col-3">
+                    <p>Ad</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <section id="makeWord">
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <section id="wordView">
+                    </section>
+                </div>
+            </div>
+        </div>
+        <script src="/assets/bundle.js"></script>
+        <!-- bootstrap js -->
+        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
 </html>
