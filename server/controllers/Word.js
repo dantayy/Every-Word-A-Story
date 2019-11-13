@@ -38,7 +38,11 @@ const makeWord = (req, res) => {
   const wordPromise = newWord.save();
   // update the account's lastPosted property and reload the page after successful submission
   wordPromise.then(() => {
-    models.Account.AccountModel.updateLastPosted(req.session.account.username, Date.now());
+    models.Account.AccountModel.updateLastPosted(req.session.account.username, (err) => {
+        if(err) {
+            return res.status(500).json({error: `Unknown error occured when updating timeout`});
+        }
+    });
     console.log(`New lastPosted time: ${Date.parse(req.session.account.lastPosted)}`);
     res.json({ redirect: '/maker' });
   });
