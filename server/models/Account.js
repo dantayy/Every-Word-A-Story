@@ -113,7 +113,7 @@ AccountSchema.statics.updateLastPosted = (un, callback) => AccountModel.findByUs
     savePromise.then(() => {
         return callback();
     });
-    savePromise.catch((err) => return callback(err));
+    savePromise.catch((err) => callback(err));
 });
 
 AccountModel = mongoose.model('Account', AccountSchema);
