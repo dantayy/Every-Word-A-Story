@@ -12,19 +12,21 @@ const makerPage = (req, res) => {
       return res.status(400).json({ error: 'An error occurred' });
     }
 
-    return res.render('app', { csrfToken: req.csrfToken(), words: docs });
+    return res.render('app', {
+      csrfToken: req.csrfToken(),
+      words: docs,
+      username: req.session.account.username,
+    });
   });
 };
 
 // make a new word based on the text parsed and account signed in
 const makeWord = (req, res) => {
-  console.log(`Old lastPosted time: ${Date.parse(req.session.account.lastPosted)}`);
-
   // check to see if no word was submitted or if timeout hasn't ended yet
   if (!req.body.text) {
     return res.status(400).json({ error: 'All fields are required' });
   } else if (Date.now() - req.session.account.timeBetweenPosts <
-             Date.parse(req.session.account.lastPosted)) {
+               Date.parse(req.session.account.lastPosted)) {
     return res.status(400).json({ error: 'Your post timeout isn\'t over yet, please wait' });
   }
 
@@ -39,9 +41,9 @@ const makeWord = (req, res) => {
   // update the account's lastPosted property and reload the page after successful submission
   wordPromise.then(() => {
     models.Account.AccountModel.updateLastPosted(req.session.account.username, (err) => {
-        if(err) {
-            return res.status(500).json({error: `Unknown error occured when updating timeout`});
-        }
+      if (err) {
+        res.status(500).json({ error: 'Unknown error occured when updating timeout' });
+      }
     });
     console.log(`New lastPosted time: ${Date.parse(req.session.account.lastPosted)}`);
     res.json({ redirect: '/maker' });

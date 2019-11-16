@@ -130,15 +130,33 @@ $(document).ready(function () {
 });
 "use strict";
 
+var ErrorMessage = function ErrorMessage(props) {
+    if (!props.message) {
+        return null;
+    } else {
+        return React.createElement(
+            "div",
+            { className: "alert alert-danger alert-dismissible fade in show" },
+            React.createElement(
+                "p",
+                null,
+                props.message
+            ),
+            React.createElement(
+                "a",
+                { href: "#", "class": "close", "data-dismiss": "alert", "aria-label": "close" },
+                "\xD7"
+            )
+        );
+    }
+};
 // function for handling errors
 var handleError = function handleError(message) {
-    $("#errorMessage").text(message);
-    $("#domoMessage").animate({ width: "toggle" }, 350);
+    ReactDOM.render(React.createElement(ErrorMessage, { message: message }), document.querySelector("#error"));
 };
 
 // function for redirecting
 var redirect = function redirect(response) {
-    $("#domoMessage").animate({ width: "hide" }, 350);
     window.location = response.redirect;
 };
 
@@ -157,3 +175,8 @@ var sendAjax = function sendAjax(type, action, data, success) {
         }
     });
 };
+
+// called when page loads
+$(document).ready(function () {
+    handleError();
+});

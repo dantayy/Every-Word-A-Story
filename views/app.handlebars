@@ -19,9 +19,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-3">
-                    <p>Username</p>
-                    <a href="/logout">Log out</a>
-                    <p>Change Password</p>
+                    <p>Signed in as: <b>{{username}}</b></p>
+                    <p><a href="/logout">Log out</a></p>
+                    <p><a href="/account">Manage Account</a></p>
                 </div>
                 <div class="col-6">
                     <h1>Every Word A Story</h1>
@@ -50,14 +50,13 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="alert alert-danger" role="alert">
-                      This is a danger alert—check it out!
-                    </div>
+                    <section id="error">
+                    </section>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <section id="wordView">
+                    <section id="timeoutCheck">
                     </section>
                 </div>
             </div>

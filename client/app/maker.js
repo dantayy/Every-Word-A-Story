@@ -1,15 +1,6 @@
 // users can't make words longer than this
 const maxWordLength = 30;
 
-//change the display from all words to user's words & vice versa
-const handleWordView = (e) => {
-    if(e.target.value === "all"){
-        loadAllWordsFromServer();
-    } else {
-        loadWordsFromServer();
-    }
-};
-
 // func for handling a string the user wants to add to the story
 const handleWord = (e) => {
     e.preventDefault();
@@ -72,18 +63,6 @@ const WordList = (props) => {
     );
 };
 
-// React form for choosing to display the entire story or just a user's story
-const WordView = (props) => {
-    return (
-        <form id="domoView" name="wordView" className="domoForm">
-            <label htmlFor="view">View All Words - </label>
-            <input type="radio" onClick={handleWordView} name="view" value="all" defaultChecked />
-            <label htmlFor="view">View Your Words - </label>
-            <input type="radio" onClick={handleWordView} name="view" value="user" />
-        </form>
-    );
-};
-
 // func for rendering a user's set of words to the screen
 const loadWordsFromServer = () => {
     sendAjax(`GET`, `/getWords`, null, (data) => {
@@ -111,14 +90,10 @@ const setup = (csrf) => {
     );
 
     ReactDOM.render(
-        <WordView />,
-        document.querySelector(`#wordView`)
-    );
-
-    ReactDOM.render(
         <WordList words={[]} />,
         document.querySelector(`#words`)
     );
+    
 
     loadAllWordsFromServer();
 };

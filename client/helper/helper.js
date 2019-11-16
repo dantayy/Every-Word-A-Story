@@ -1,12 +1,25 @@
+const ErrorMessage = (props) => {
+    if(!props.message) {
+        return null;
+    } else {
+        return (
+            <div className="alert alert-danger alert-dismissible fade in show">
+                <p>{props.message}</p>
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            </div>
+        );
+    }
+};
 // function for handling errors
 const handleError = (message) => {
-    $(`#errorMessage`).text(message);
-    $(`#domoMessage`).animate({width:`toggle`}, 350);
+    ReactDOM.render(
+        <ErrorMessage message={message} />,
+        document.querySelector(`#error`),
+    );
 };
 
 // function for redirecting
 const redirect = (response) => {
-    $(`#domoMessage`).animate({width:`hide`}, 350);
     window.location = response.redirect;
 };
 
@@ -24,4 +37,9 @@ const sendAjax = (type, action, data, success) => {
             handleError(messageObj.error);
         }
     });
-}
+};
+
+// called when page loads
+$(document).ready(() => {
+    handleError();
+});
