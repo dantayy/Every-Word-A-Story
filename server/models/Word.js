@@ -34,9 +34,8 @@ const WordSchema = new mongoose.Schema({
 });
 
 WordSchema.statics.toAPI = doc => ({
-  name: doc.name,
-  age: doc.age,
-  image: doc.image,
+  text: doc.text,
+  owner: doc.owner,
 });
 
 WordSchema.statics.findByOwner = (ownerId, callback) => {

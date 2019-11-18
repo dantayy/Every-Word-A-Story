@@ -7,16 +7,14 @@ var maxWordLength = 30;
 var handleWord = function handleWord(e) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: "hide" }, 350);
-
     if ($("#wordText").val() === "") {
-        handleError("Need to put in a word!");
+        handleAlert("Need to put in a word!", "danger");
         return false;
     } else if ($("#wordText").val().length > maxWordLength) {
-        handleError("Word is too long!");
+        handleAlert("Word is too long!", "danger");
         return false;
     } else if ($("#wordText").val().indexOf(" ") >= 0) {
-        handleError("Can't put in multiple words!");
+        handleAlert("Can't put in multiple words!", "danger");
         return false;
     }
 
@@ -27,19 +25,32 @@ var handleWord = function handleWord(e) {
     return false;
 };
 
+// func for handling users clicking on specific words
+var handleWordClick = function handleWordClick(e) {
+    e.preventDefault();
+
+    loadWordsFromServer(e.target.key);
+
+    return false;
+};
+
 // React form for submitting a word to the story
 var WordForm = function WordForm(props) {
     return React.createElement(
         "form",
-        { id: "wordForm", onSubmit: handleWord, name: "wordForm", action: "/maker", method: "POST", className: "domoForm" },
+        { id: "wordForm", onSubmit: handleWord, name: "wordForm", action: "/maker", method: "POST" },
         React.createElement(
-            "label",
-            { htmlFor: "text" },
-            "Word: "
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "label",
+                { htmlFor: "text" },
+                " - Word - "
+            ),
+            React.createElement("input", { id: "wordText", type: "text", name: "text", placeholder: "One Word Only!" })
         ),
-        React.createElement("input", { id: "wordText", type: "text", name: "text", placeholder: "One Word Only!" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Add Word" })
+        React.createElement("input", { type: "submit", value: "Add Word" })
     );
 };
 
@@ -48,10 +59,10 @@ var WordList = function WordList(props) {
     if (props.words.length === 0) {
         return React.createElement(
             "div",
-            { className: "domoList" },
+            null,
             React.createElement(
                 "h3",
-                { className: "emptyDomo" },
+                null,
                 "No words yet"
             )
         );
@@ -61,24 +72,30 @@ var WordList = function WordList(props) {
         var spanStyle = {
             color: word.color
         };
-        return React.createElement(
-            "span",
-            { key: word._id, style: spanStyle },
-            word.text,
-            " "
+        return (
+            //            // this implementation breaks everything and idk why
+            //            <a href="#" key={word.owner} style={spanStyle} onClick={handleWordClick} > 
+            //                {word.text} 
+            //            </a>
+            React.createElement(
+                "span",
+                { key: word._id, style: spanStyle },
+                word.text,
+                " "
+            )
         );
     });
 
     return React.createElement(
         "div",
-        { className: "domoList" },
+        null,
         wordNodes
     );
 };
 
 // func for rendering a user's set of words to the screen
-var loadWordsFromServer = function loadWordsFromServer() {
-    sendAjax("GET", "/getWords", null, function (data) {
+var loadWordsFromServer = function loadWordsFromServer(id) {
+    sendAjax("GET", "/getWords", { id: id }, function (data) {
         ReactDOM.render(React.createElement(WordList, { words: data.words }), document.querySelector("#words"));
     });
 };
@@ -90,6 +107,7 @@ var loadAllWordsFromServer = function loadAllWordsFromServer() {
     });
 };
 
+// set up all react based components for client and load the story
 var setup = function setup(csrf) {
     ReactDOM.render(React.createElement(WordForm, { csrf: csrf }), document.querySelector("#makeWord"));
 
@@ -111,13 +129,13 @@ $(document).ready(function () {
 });
 "use strict";
 
-var ErrorMessage = function ErrorMessage(props) {
-    if (!props.message) {
+var AlertMessage = function AlertMessage(props) {
+    if (!props.message || !props.type) {
         return null;
     } else {
         return React.createElement(
             "div",
-            { className: "alert alert-danger alert-dismissible fade in show" },
+            { className: "alert alert-" + props.type + " alert-dismissible fade in show" },
             React.createElement(
                 "p",
                 null,
@@ -132,8 +150,8 @@ var ErrorMessage = function ErrorMessage(props) {
     }
 };
 // function for handling errors
-var handleError = function handleError(message) {
-    ReactDOM.render(React.createElement(ErrorMessage, { message: message }), document.querySelector("#error"));
+var handleAlert = function handleAlert(message, type) {
+    ReactDOM.render(React.createElement(AlertMessage, { message: message, type: type }), document.querySelector("#error"));
 };
 
 // function for redirecting
@@ -152,12 +170,12 @@ var sendAjax = function sendAjax(type, action, data, success) {
         success: success,
         error: function error(xhr, status, _error) {
             var messageObj = JSON.parse(xhr.responseText);
-            handleError(messageObj.error);
+            handleAlert(messageObj.error, "danger");
         }
     });
 };
 
 // called when page loads
 $(document).ready(function () {
-    handleError();
+    handleAlert();
 });

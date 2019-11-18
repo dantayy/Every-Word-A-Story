@@ -4,10 +4,8 @@
 var handleLogin = function handleLogin(e) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: "hide" }, 350);
-
     if ($("#user").val() === "" || $("#pass").val() === "") {
-        handleError("RAWR! Username or password is empty");
+        handleAlert("Username or password is empty", "danger");
         return false;
     }
 
@@ -22,15 +20,13 @@ var handleLogin = function handleLogin(e) {
 var handleSignup = function handleSignup(e) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: "hide" }, 350);
-
     if ($("#user").val() === "" || $("#pass").val() === "" || $("#pass2").val() === "") {
-        handleError("RAWR! All fields are required");
+        handleAlert("All fields are required", "danger");
         return false;
     }
 
     if ($("#pass").val() !== $("#pass2").val()) {
-        handleError("RAWR! Passwords do not match");
+        handleAlert("Passwords do not match", "danger");
         return false;
     }
 
@@ -45,17 +41,25 @@ var LoginWindow = function LoginWindow(props) {
         "form",
         { id: "loginForm", name: "loginForm", onSubmit: handleLogin, action: "/login", method: "POST", className: "mainForm" },
         React.createElement(
-            "label",
-            { htmlFor: "username" },
-            "Username: "
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "label",
+                { htmlFor: "username" },
+                " - Username - "
+            ),
+            React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" })
         ),
-        React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" }),
         React.createElement(
-            "label",
-            { htmlFor: "pass" },
-            "Password: "
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "label",
+                { htmlFor: "pass" },
+                " - Password - "
+            ),
+            React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" })
         ),
-        React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
         React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
     );
@@ -67,23 +71,35 @@ var SignupWindow = function SignupWindow(props) {
         "form",
         { id: "signupForm", name: "signupForm", onSubmit: handleSignup, action: "/signup", method: "POST", className: "mainForm" },
         React.createElement(
-            "label",
-            { htmlFor: "username" },
-            "Username: "
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "label",
+                { htmlFor: "username" },
+                " - Username - "
+            ),
+            React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" })
         ),
-        React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" }),
         React.createElement(
-            "label",
-            { htmlFor: "pass" },
-            "Password: "
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "label",
+                { htmlFor: "pass" },
+                " - Password - "
+            ),
+            React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" })
         ),
-        React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
         React.createElement(
-            "label",
-            { htmlFor: "pass2" },
-            "Password: "
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "label",
+                { htmlFor: "pass2" },
+                " - Re-Enter Password - "
+            ),
+            React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "retype password" })
         ),
-        React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "retype password" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
         React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign Up" })
     );
@@ -130,13 +146,13 @@ $(document).ready(function () {
 });
 "use strict";
 
-var ErrorMessage = function ErrorMessage(props) {
-    if (!props.message) {
+var AlertMessage = function AlertMessage(props) {
+    if (!props.message || !props.type) {
         return null;
     } else {
         return React.createElement(
             "div",
-            { className: "alert alert-danger alert-dismissible fade in show" },
+            { className: "alert alert-" + props.type + " alert-dismissible fade in show" },
             React.createElement(
                 "p",
                 null,
@@ -151,8 +167,8 @@ var ErrorMessage = function ErrorMessage(props) {
     }
 };
 // function for handling errors
-var handleError = function handleError(message) {
-    ReactDOM.render(React.createElement(ErrorMessage, { message: message }), document.querySelector("#error"));
+var handleAlert = function handleAlert(message, type) {
+    ReactDOM.render(React.createElement(AlertMessage, { message: message, type: type }), document.querySelector("#error"));
 };
 
 // function for redirecting
@@ -171,12 +187,12 @@ var sendAjax = function sendAjax(type, action, data, success) {
         success: success,
         error: function error(xhr, status, _error) {
             var messageObj = JSON.parse(xhr.responseText);
-            handleError(messageObj.error);
+            handleAlert(messageObj.error, "danger");
         }
     });
 };
 
 // called when page loads
 $(document).ready(function () {
-    handleError();
+    handleAlert();
 });

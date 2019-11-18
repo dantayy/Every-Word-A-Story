@@ -40,13 +40,26 @@ const makeWord = (req, res) => {
   const wordPromise = newWord.save();
   // update the account's lastPosted property and reload the page after successful submission
   wordPromise.then(() => {
-    models.Account.AccountModel.updateLastPosted(req.session.account.username, (err) => {
+    // find the document to update and change its lastUpdated value
+    const username = req.session.account.username;
+    models.Account.AccountModel.findByUsername(username, (err, doc) => {
       if (err) {
-        res.status(500).json({ error: 'Unknown error occured when updating timeout' });
+        return res.status(500).json({
+          error: 'An error occured while looking up your account',
+        });
       }
+      const account = doc;
+      account.lastPosted = Date.now();
+      const savePromise = account.save();
+      savePromise.then(() => {
+        const session = req.session;
+        session.account = models.Account.AccountModel.toAPI(account);
+      });
+      savePromise.catch(() => res.status(500).json({
+        error: 'An error occured while updating your timeout period' }));
+      return savePromise;
     });
-    console.log(`New lastPosted time: ${Date.parse(req.session.account.lastPosted)}`);
-    res.json({ redirect: '/maker' });
+    res.status(201).json({ redirect: '/maker' });
   });
   // catch errors
   wordPromise.catch((err) => {
@@ -62,7 +75,8 @@ const makeWord = (req, res) => {
 };
 
 // get words made by the user currently signed in
-const getWords = (req, res) => Word.WordModel.findByOwner(req.session.account._id, (err, docs) => {
+const getWords = (req, res) => Word.WordModel.findByOwner(req.body.id, (err, docs) => {
+  console.log(req.body.id);
   if (err) {
     console.log(err);
     return res.status(400).json({ error: 'An error occurred' });

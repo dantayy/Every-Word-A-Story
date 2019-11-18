@@ -98,25 +98,6 @@ AccountSchema.statics.authenticate = (username, password, callback) =>
     });
   });
 
-AccountSchema.statics.updateLastPosted = (un, callback) =>
-  AccountModel.findByUsername(un, (err, doc) => {
-    if (err) {
-      return callback(err);
-    }
-
-    if (!doc) {
-      return callback();
-    }
-
-    const account = doc;
-    account.lastPosted = Date.now();
-    const savePromise = account.save();
-    savePromise.then(() => callback());
-    savePromise.catch((error) => callback(error));
-
-    return callback();
-  });
-
 AccountModel = mongoose.model('Account', AccountSchema);
 
 module.exports.AccountModel = AccountModel;

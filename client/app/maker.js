@@ -5,16 +5,14 @@ const maxWordLength = 30;
 const handleWord = (e) => {
     e.preventDefault();
 
-    $(`#domoMessage`).animate({width:`hide`}, 350);
-
     if($(`#wordText`).val() === ``) {
-        handleError(`Need to put in a word!`);
+        handleAlert(`Need to put in a word!`, `danger`);
         return false;
     } else if ($(`#wordText`).val().length > maxWordLength) {
-        handleError(`Word is too long!`);
+        handleAlert(`Word is too long!`, `danger`);
         return false;
     } else if ($(`#wordText`).val().indexOf(` `) >= 0) {
-        handleError(`Can't put in multiple words!`);
+        handleAlert(`Can't put in multiple words!`, `danger`);
         return false;
     }
 
@@ -25,14 +23,25 @@ const handleWord = (e) => {
     return false;
 };
 
+// func for handling users clicking on specific words
+const handleWordClick = (e) => {
+    e.preventDefault();
+    
+    loadWordsFromServer(e.target.key);
+    
+    return false
+}
+
 // React form for submitting a word to the story
 const WordForm = (props) => {
     return (
-        <form id="wordForm" onSubmit={handleWord} name="wordForm" action="/maker" method="POST" className="domoForm">
-            <label htmlFor="text">Word: </label>
-            <input id="wordText" type="text" name="text" placeholder="One Word Only!" />
+        <form id="wordForm" onSubmit={handleWord} name="wordForm" action="/maker" method="POST">
+            <div class="form-group">
+                <label htmlFor="text"> - Word - </label>
+                <input id="wordText" type="text" name="text" placeholder="One Word Only!" />
+            </div>
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Add Word" />
+            <input type="submit" value="Add Word" />
         </form>
     );
 };
@@ -41,8 +50,8 @@ const WordForm = (props) => {
 const WordList = (props) => {
     if(props.words.length === 0) {
         return(
-            <div className="domoList">
-                <h3 className="emptyDomo">No words yet</h3>
+            <div>
+                <h3>No words yet</h3>
             </div>
         );
     }
@@ -52,20 +61,24 @@ const WordList = (props) => {
             color: word.color,
         }
         return (
+//            // this implementation breaks everything and idk why
+//            <a href="#" key={word.owner} style={spanStyle} onClick={handleWordClick} > 
+//                {word.text} 
+//            </a>
             <span key={word._id} style={spanStyle} >{word.text} </span>
         );
     });
 
     return(
-        <div className="domoList">
+        <div>
             {wordNodes}
         </div>
     );
 };
 
 // func for rendering a user's set of words to the screen
-const loadWordsFromServer = () => {
-    sendAjax(`GET`, `/getWords`, null, (data) => {
+const loadWordsFromServer = (id) => {
+    sendAjax(`GET`, `/getWords`, {id: id}, (data) => {
         ReactDOM.render(
             <WordList words={data.words} />,
             document.querySelector(`#words`)
@@ -83,6 +96,7 @@ const loadAllWordsFromServer = () => {
     });
 };
 
+// set up all react based components for client and load the story
 const setup = (csrf) => {
     ReactDOM.render(
         <WordForm csrf={csrf} />,
@@ -93,7 +107,6 @@ const setup = (csrf) => {
         <WordList words={[]} />,
         document.querySelector(`#words`)
     );
-    
 
     loadAllWordsFromServer();
 };

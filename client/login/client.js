@@ -2,10 +2,8 @@
 const handleLogin = (e) => {
     e.preventDefault();
 
-    $(`#domoMessage`).animate({width:`hide`}, 350);
-
     if($(`#user`).val() === `` || $(`#pass`).val() === ``) {
-        handleError(`RAWR! Username or password is empty`);
+        handleAlert(`Username or password is empty`, `danger`);
         return false;
     }
 
@@ -20,15 +18,13 @@ const handleLogin = (e) => {
 const handleSignup = (e) => {
     e.preventDefault();
 
-    $(`#domoMessage`).animate({width:`hide`}, 350);
-
     if($(`#user`).val() === `` || $(`#pass`).val() === `` || $(`#pass2`).val() === ``) {
-        handleError(`RAWR! All fields are required`);
+        handleAlert(`All fields are required`, `danger`);
         return false;
     }
 
     if($(`#pass`).val() !== $(`#pass2`).val()) {
-        handleError(`RAWR! Passwords do not match`);
+        handleAlert(`Passwords do not match`, `danger`);
         return false;
     }
 
@@ -41,10 +37,14 @@ const handleSignup = (e) => {
 const LoginWindow = (props) => {
     return(
         <form id="loginForm" name="loginForm" onSubmit={handleLogin} action="/login" method="POST" className="mainForm">
-            <label htmlFor="username">Username: </label>
-            <input id="user" type="text" name="username" placeholder="username" />
-            <label htmlFor="pass">Password: </label>
-            <input id="pass" type="password" name="pass" placeholder="password" />
+            <div class="form-group">
+                <label htmlFor="username"> - Username - </label>
+                <input id="user" type="text" name="username" placeholder="username" />
+            </div>
+            <div class="form-group">
+                <label htmlFor="pass"> - Password - </label>
+                <input id="pass" type="password" name="pass" placeholder="password" />
+            </div>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="formSubmit" type="submit" value="Sign in" />
         </form>
@@ -55,12 +55,18 @@ const LoginWindow = (props) => {
 const SignupWindow = (props) => {
     return(
         <form id="signupForm" name="signupForm" onSubmit={handleSignup} action="/signup" method="POST" className="mainForm">
-            <label htmlFor="username">Username: </label>
-            <input id="user" type="text" name="username" placeholder="username" />
-            <label htmlFor="pass">Password: </label>
-            <input id="pass" type="password" name="pass" placeholder="password" />
-            <label htmlFor="pass2">Password: </label>
-            <input id="pass2" type="password" name="pass2" placeholder="retype password" />
+            <div class="form-group">
+                <label htmlFor="username"> - Username - </label>
+                <input id="user" type="text" name="username" placeholder="username" />
+            </div>
+            <div class="form-group">
+                <label htmlFor="pass"> - Password - </label>
+                <input id="pass" type="password" name="pass" placeholder="password" />
+            </div>
+            <div class="form-group">
+                <label htmlFor="pass2"> - Re-Enter Password - </label>
+                <input id="pass2" type="password" name="pass2" placeholder="retype password" />
+            </div>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="formSubmit" type="submit" value="Sign Up" />
         </form>
@@ -97,7 +103,7 @@ const setup = (csrf) => {
         createLoginWindow(csrf);
         return false;
     });
-    
+
     createLoginWindow(csrf); // default view
 };
 

@@ -1,9 +1,9 @@
-const ErrorMessage = (props) => {
-    if(!props.message) {
+const AlertMessage = (props) => {
+    if(!props.message || !props.type) {
         return null;
     } else {
         return (
-            <div className="alert alert-danger alert-dismissible fade in show">
+            <div className={`alert alert-${props.type} alert-dismissible fade in show`}>
                 <p>{props.message}</p>
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             </div>
@@ -11,9 +11,9 @@ const ErrorMessage = (props) => {
     }
 };
 // function for handling errors
-const handleError = (message) => {
+const handleAlert = (message, type) => {
     ReactDOM.render(
-        <ErrorMessage message={message} />,
+        <AlertMessage message={message} type={type} />,
         document.querySelector(`#error`),
     );
 };
@@ -34,12 +34,12 @@ const sendAjax = (type, action, data, success) => {
         success: success,
         error: function(xhr, status, error) {
             let messageObj = JSON.parse(xhr.responseText);
-            handleError(messageObj.error);
+            handleAlert(messageObj.error, `danger`);
         }
     });
 };
 
 // called when page loads
 $(document).ready(() => {
-    handleError();
+    handleAlert();
 });

@@ -6,38 +6,41 @@
         <title>Every Word A Story</title>
         <!-- bootstrap css -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- scripts for assisting with all of the fancy server stuff -->
         <script crossorigin src="https://unpkg.com/react@15/dist/react.min.js"></script>
         <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
         <script crossorigin src="https://unpkg.com/prop-types/prop-types.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
-        <link rel="shortcut icon" href="/assets/img/favicon.png"/>
+        <!-- custom fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Permanent+Marker&display=swap" rel="stylesheet">
+        <!-- custom css -->
         <link rel="stylesheet" type="text/css" href="/assets/style.css"/>
     </head>
     <body> 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-3">
+                <div class="col-sm-3">
                     <nav>
-                        <div><a id="loginButton" href="/login">Login</a></div>
-                        <div><a id="signupButton" href="/signup">Sign up</a></div>
+                        <div><a id="loginButton" href="/login"> - Login - </a></div>
+                        <div><a id="signupButton" href="/signup"> - Sign up - </a></div>
                     </nav>
                 </div>
-                <div class="col-6">
+                <div class="col-sm-6">
                     <h1>Every Word A Story</h1>
                 </div>
-                <div class="col-3">
+                <div class="col-sm-3">
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
+                <div class="col-sm-3">
                     <p>Ad</p>
                 </div>
-                <div class="col-6">
+                <div class="col-sm-6">
                     <section id="content"></section>
                 </div>
-                <div class="col-3">
+                <div class="col-sm-3">
                     <p>Ad</p>
                 </div>
             </div>
