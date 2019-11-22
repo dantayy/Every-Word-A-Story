@@ -24,6 +24,13 @@ var handlePassword = function handlePassword(e) {
 var handleTimeout = function handleTimeout(e) {
     e.preventDefault();
 
+    //not checking fields bc we're not using any of them actually
+
+    sendAjax("POST", $("#toForm").attr("action"), $("#toForm").serialize(), function () {
+        handleAlert("Timeout decreased successfully", "success");
+        return false;
+    });
+
     return false;
 };
 
@@ -146,6 +153,7 @@ $(document).ready(function () {
 });
 "use strict";
 
+// renders bootstrap alerts with the given type and message
 var AlertMessage = function AlertMessage(props) {
     if (!props.message || !props.type) {
         return null;
@@ -166,7 +174,8 @@ var AlertMessage = function AlertMessage(props) {
         );
     }
 };
-// function for handling errors
+
+// function for handling alerts
 var handleAlert = function handleAlert(message, type) {
     ReactDOM.render(React.createElement(AlertMessage, { message: message, type: type }), document.querySelector("#error"));
 };

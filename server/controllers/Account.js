@@ -187,7 +187,6 @@ const changeTimeout = (req, res) => {
     savePromise.then(() => {
       const session = req.session;
       session.account = Account.AccountModel.toAPI(account);
-      console.log(req.session.account.timeBetweenPosts);
       return res.status(204);
     });
     savePromise.catch(() => res.status(500).json({

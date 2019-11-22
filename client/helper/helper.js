@@ -1,3 +1,4 @@
+// renders bootstrap alerts with the given type and message
 const AlertMessage = (props) => {
     if(!props.message || !props.type) {
         return null;
@@ -10,7 +11,8 @@ const AlertMessage = (props) => {
         );
     }
 };
-// function for handling errors
+
+// function for handling alerts
 const handleAlert = (message, type) => {
     ReactDOM.render(
         <AlertMessage message={message} type={type} />,

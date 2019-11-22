@@ -76,7 +76,7 @@ const WordList = (props) => {
     );
 };
 
-// func for rendering a user's set of words to the screen
+// func for rendering a specific set of words to the screen
 const loadWordsFromServer = (id) => {
     sendAjax(`GET`, `/getWords`, {id: id}, (data) => {
         ReactDOM.render(

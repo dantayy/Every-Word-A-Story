@@ -21,7 +21,14 @@ const handlePassword = (e) => {
 // handle changing a user's post timeout period
 const handleTimeout = (e) => {
     e.preventDefault();
-
+    
+    //not checking fields bc we're not using any of them actually
+    
+    sendAjax(`POST`, $(`#toForm`).attr(`action`), $(`#toForm`).serialize(), () => {
+        handleAlert(`Timeout decreased successfully`, `success`);
+        return false;
+    });
+    
     return false;
 };
 

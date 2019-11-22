@@ -93,7 +93,7 @@ var WordList = function WordList(props) {
     );
 };
 
-// func for rendering a user's set of words to the screen
+// func for rendering a specific set of words to the screen
 var loadWordsFromServer = function loadWordsFromServer(id) {
     sendAjax("GET", "/getWords", { id: id }, function (data) {
         ReactDOM.render(React.createElement(WordList, { words: data.words }), document.querySelector("#words"));
@@ -129,6 +129,7 @@ $(document).ready(function () {
 });
 "use strict";
 
+// renders bootstrap alerts with the given type and message
 var AlertMessage = function AlertMessage(props) {
     if (!props.message || !props.type) {
         return null;
@@ -149,7 +150,8 @@ var AlertMessage = function AlertMessage(props) {
         );
     }
 };
-// function for handling errors
+
+// function for handling alerts
 var handleAlert = function handleAlert(message, type) {
     ReactDOM.render(React.createElement(AlertMessage, { message: message, type: type }), document.querySelector("#error"));
 };

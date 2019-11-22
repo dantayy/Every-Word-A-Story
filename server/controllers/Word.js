@@ -22,6 +22,8 @@ const makerPage = (req, res) => {
 
 // make a new word based on the text parsed and account signed in
 const makeWord = (req, res) => {
+  console.log(`Math: ${Date.now() - req.session.account.timeBetweenPosts}`);
+  console.log(`Last posted var: ${Date.parse(req.session.account.lastPosted)}`);
   // check to see if no word was submitted or if timeout hasn't ended yet
   if (!req.body.text) {
     return res.status(400).json({ error: 'All fields are required' });
