@@ -1,4 +1,4 @@
-// widdleware function for checking if user is logged in
+// middleware function for checking if user is logged in
 const requiresLogin = (req, res, next) => {
   if (!req.session.account) {
     return res.redirect('/');

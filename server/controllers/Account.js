@@ -175,7 +175,7 @@ const changeTimeout = (req, res) => {
       });
     }
     const account = doc;
-    // check to see if user's timeout period is already at its lowest
+    // check to see if user's timeout period is already at its lowest before decreasing
     if (account.timeBetweenPosts <= minTimeout) {
       return res.status(500).json({
         error: 'Your timeout period is the lowest it can be!' });

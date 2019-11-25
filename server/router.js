@@ -1,6 +1,8 @@
+// pull in controllers and middleware for our router to use
 const controllers = require('./controllers');
 const mid = require('./middleware');
 
+// handle get/post requests to the various routes, doing middleware checks along the way
 const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
   app.get('/getWords', mid.requiresLogin, controllers.Word.getWords);

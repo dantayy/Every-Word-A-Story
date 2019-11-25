@@ -25,7 +25,6 @@ var handleTimeout = function handleTimeout(e) {
     e.preventDefault();
 
     //not checking fields bc we're not using any of them actually
-
     sendAjax("POST", $("#toForm").attr("action"), $("#toForm").serialize(), function () {
         handleAlert("Timeout decreased successfully", "success");
         return false;

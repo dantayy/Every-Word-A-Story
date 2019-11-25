@@ -105,10 +105,12 @@ var SignupWindow = function SignupWindow(props) {
     );
 };
 
+// for rendering the login component to the screen
 var createLoginWindow = function createLoginWindow(csrf) {
     ReactDOM.render(React.createElement(LoginWindow, { csrf: csrf }), document.querySelector("#content"));
 };
 
+// for rendering the signup component to the screen
 var createSignupWindow = function createSignupWindow(csrf) {
     ReactDOM.render(React.createElement(SignupWindow, { csrf: csrf }), document.querySelector("#content"));
 };

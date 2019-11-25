@@ -73,6 +73,7 @@ const SignupWindow = (props) => {
     );
 };
 
+// for rendering the login component to the screen
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
@@ -80,6 +81,7 @@ const createLoginWindow = (csrf) => {
     );
 };
 
+// for rendering the signup component to the screen
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
         <SignupWindow csrf={csrf} />,

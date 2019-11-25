@@ -11,10 +11,13 @@ const RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
 
+// port to serve this web app on
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+// var for the database path that holds all our models
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/EveryWordAStory';
 
+// connect to mongo
 mongoose.connect(dbURL, (err) => {
   if (err) {
     console.log('Couldn\'t connect to db');
@@ -22,13 +25,12 @@ mongoose.connect(dbURL, (err) => {
   }
 });
 
+// set up connection to redis
 let redisURL = {
   hostname: 'redis-13810.c10.us-east-1-2.ec2.cloud.redislabs.com', // hostname from the RedisLabs
   port: 13810, // your port from the RedisLabs
 };
-
 let redisPASS = '191MlBHQGWR1oSxp0JrebJ22FyWf9Wtk'; // password from RedisLABS
-
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
   redisPASS = redisURL.auth.split(':')[1];
@@ -37,6 +39,7 @@ if (process.env.REDISCLOUD_URL) {
 // pull in our routes
 const router = require('./router.js');
 
+// set up our app the express way
 const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.disable('x-powered-by');
@@ -71,8 +74,10 @@ app.use((err, req, res, next) => {
   return false;
 });
 
+// connect our router to our app
 router(app);
 
+// start listening to the specified port
 app.listen(port, (err) => {
   if (err) {
     throw err;

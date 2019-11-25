@@ -1,13 +1,17 @@
+// neccesary dependencies
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 
+// new mongoose promise system to use with this model/schema
 mongoose.Promise = global.Promise;
 
+// vars for the model and schema
 let AccountModel = {};
 const iterations = 10000;
 const saltLength = 64;
 const keyLength = 64;
 
+// all paramaters needed for an account
 const AccountSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -43,6 +47,7 @@ const AccountSchema = new mongoose.Schema({
   },
 });
 
+// vars sent here can be accessed by any other file that pulls in this model
 AccountSchema.statics.toAPI = doc => ({
   // _id is built into your mongo document and is guaranteed to be unique
   username: doc.username,
@@ -52,6 +57,7 @@ AccountSchema.statics.toAPI = doc => ({
   lastPosted: doc.lastPosted,
 });
 
+// use the crypto dependency to check if the password passed is correct
 const validatePassword = (doc, password, callback) => {
   const pass = doc.password;
 
@@ -63,6 +69,7 @@ const validatePassword = (doc, password, callback) => {
   });
 };
 
+// find an account by username
 AccountSchema.statics.findByUsername = (name, callback) => {
   const search = {
     username: name,
@@ -71,6 +78,7 @@ AccountSchema.statics.findByUsername = (name, callback) => {
   return AccountModel.findOne(search, callback);
 };
 
+// generate a hash for an account
 AccountSchema.statics.generateHash = (password, callback) => {
   const salt = crypto.randomBytes(saltLength);
 
@@ -79,6 +87,7 @@ AccountSchema.statics.generateHash = (password, callback) => {
   );
 };
 
+// aithenticate an account
 AccountSchema.statics.authenticate = (username, password, callback) =>
   AccountModel.findByUsername(username, (err, doc) => {
     if (err) {
@@ -98,7 +107,9 @@ AccountSchema.statics.authenticate = (username, password, callback) =>
     });
   });
 
+// create a new mongo model based on the schema we've constructed
 AccountModel = mongoose.model('Account', AccountSchema);
 
+// export the model and schema so both can be accessed/used elsewhere
 module.exports.AccountModel = AccountModel;
 module.exports.AccountSchema = AccountSchema;

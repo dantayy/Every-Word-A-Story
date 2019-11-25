@@ -22,61 +22,64 @@ const makerPage = (req, res) => {
 
 // make a new word based on the text parsed and account signed in
 const makeWord = (req, res) => {
-  console.log(`Math: ${Date.now() - req.session.account.timeBetweenPosts}`);
-  console.log(`Last posted var: ${Date.parse(req.session.account.lastPosted)}`);
-  // check to see if no word was submitted or if timeout hasn't ended yet
-  if (!req.body.text) {
-    return res.status(400).json({ error: 'All fields are required' });
-  } else if (Date.now() - req.session.account.timeBetweenPosts <
-               Date.parse(req.session.account.lastPosted)) {
-    return res.status(400).json({ error: 'Your post timeout isn\'t over yet, please wait' });
-  }
-
-  // build a new word with data provided
-  const wordData = {
-    text: req.body.text,
-    owner: req.session.account._id,
-    color: req.session.account.color,
-  };
-  const newWord = new Word.WordModel(wordData);
-  const wordPromise = newWord.save();
-  // update the account's lastPosted property and reload the page after successful submission
-  wordPromise.then(() => {
-    // find the document to update and change its lastUpdated value
-    const username = req.session.account.username;
-    models.Account.AccountModel.findByUsername(username, (err, doc) => {
-      if (err) {
-        return res.status(500).json({
-          error: 'An error occured while looking up your account',
-        });
-      }
-      const account = doc;
-      account.lastPosted = Date.now();
-      const savePromise = account.save();
-      savePromise.then(() => {
-        const session = req.session;
-        session.account = models.Account.AccountModel.toAPI(account);
+  models.Account.AccountModel.findByUsername(req.session.account.username, (err, doc) => {
+    // check to see if no word was submitted or if timeout hasn't ended yet
+    if (!req.body.text) {
+      return res.status(400).json({
+        error: 'All fields are required',
       });
-      savePromise.catch(() => res.status(500).json({
-        error: 'An error occured while updating your timeout period' }));
-      return savePromise;
-    });
-    res.status(201).json({ redirect: '/maker' });
-  });
-  // catch errors
-  wordPromise.catch((err) => {
-    console.log(err);
-
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Word already exists' });
+    } else if (Date.now() - doc.timeBetweenPosts < Date.parse(doc.lastPosted)) {
+      return res.status(400).json({
+        error: 'Your post timeout isn\'t over yet, please wait',
+      });
     }
 
-    return res.status(400).json({ error: 'An error occurred' });
+    // build a new word with data provided
+    const wordData = {
+      text: req.body.text,
+      owner: req.session.account._id,
+      color: req.session.account.color,
+    };
+    const newWord = new Word.WordModel(wordData);
+    const wordPromise = newWord.save();
+    // update the account's lastPosted property and reload the page after successful submission
+    wordPromise.then(() => {
+      models.Account.AccountModel.updateOne({ username: req.session.account.username },
+        { lastPosted: Date.now() }, (error) => {
+          if (error) {
+          // instead send back a response if there is an error
+            return console.dir(error);
+          }
+
+          return console.dir('updated');
+        // send back a response that it was successful
+        });
+
+      res.status(201).json({
+        redirect: '/maker',
+      });
+    });
+
+    // catch errors
+    wordPromise.catch((error) => {
+      console.log(error);
+
+      if (error.code === 11000) {
+        return res.status(400).json({
+          error: 'Word already exists',
+        });
+      }
+
+      return res.status(400).json({
+        error: 'An error occurred',
+      });
+    });
+    return wordPromise;
   });
-  return wordPromise;
 };
 
-// get words made by the user currently signed in
+
+// get words made by a user specified by an id param passed in the request body
 const getWords = (req, res) => Word.WordModel.findByOwner(req.body.id, (err, docs) => {
   console.log(req.body.id);
   if (err) {
