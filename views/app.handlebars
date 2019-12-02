@@ -34,15 +34,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-3 ad">
                     <p>Ad</p>
                 </div>
                 <div class="col-sm-6">
                     <section id="words">
                     </section>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-3 ad">
                     <p>Ad</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p>You can post once every {{timeBetweenPosts}} minutes.  If you'd like to post more frequently, please head over to <a href="/account">account management</a>.</p>
                 </div>
             </div>
             <div class="row">
@@ -52,18 +57,29 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-sm-3 ad">
+                    <p>Ad</p>
+                </div>
+                <div class="col-sm-3">
+                    <section id="makeCloud">
+                    </section>
+                </div>
+                <div class="col-sm-3">
+                    <section id="cloud">
+                    </section>
+                </div>
+                <div class="col-sm-3 ad">
+                    <p>Ad</p>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-12">
                     <section id="error">
                     </section>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <section id="timeoutCheck">
-                    </section>
-                </div>
-            </div>
         </div>
+        <script type="module"> import ReactWordcloud from '../node-modules/react-wordcloud'; </script>
         <script src="/assets/appBundle.js"></script>
         <!-- bootstrap js -->
         <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>

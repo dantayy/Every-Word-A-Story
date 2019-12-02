@@ -24,10 +24,30 @@ a:hover, .word:hover {
     margin: 0.5em;
 }
 
+.ad {
+    background-color: #364652;
+}
+
 #words {
     padding: 50px;
     font-size: 1.25em;
     background-color: #717171;
     border-radius: 50px;
     word-wrap: break-word;
+    height: 40rem;
+    overflow-y: scroll;
+}
+
+#error {
+    position: fixed;
+    bottom: 0;
+    right: 10%;
+    left: 10%;
+}
+
+/*mobile modifications*/
+@media (max-width: 780px) {
+    #words{
+        height: 10rem;
+    }
 }

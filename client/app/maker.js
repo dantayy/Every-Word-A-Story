@@ -26,11 +26,48 @@ const handleWord = (e) => {
 // func for handling users clicking on specific words
 const handleWordClick = (e) => {
     e.preventDefault();
-    
+
     loadWordsFromServer(e.target.key);
-    
-    return false
+
+    return false;
 }
+
+// func for handling generation of a word cloud
+const handleCloud = (e) => {
+    e.preventDefault();
+
+    if($(`#cloudText`).val() === ``) {
+        handleAlert(`Need to put fill the cloud!`, `danger`);
+        return false;
+    }
+
+    let words = $(`#cloudText`).val().split(` `);
+
+    let wordCloudObj = {};
+
+    let wordCloudArr = [];
+
+    for(let word of words){
+        if(wordCloudObj.word){
+            wordCloudObj.word.value++;
+        } else {
+            wordCloudObj.word = {
+                value: 1,
+            };
+        }
+    }
+
+    for(let word in wordCloudObj){
+        wordCloudArr.push({
+            text: `${word}`,
+            value: wordCloudObj[word].value,
+        });
+    }
+
+    generateWordCloud(wordCloudArr);
+
+    return false;
+};
 
 // React form for submitting a word to the story
 const WordForm = (props) => {
@@ -57,14 +94,15 @@ const WordList = (props) => {
     }
 
     const wordNodes = props.words.map((word) => {
+        //        console.log("adding a word");
         const spanStyle = {
             color: word.color,
         }
         return (
-//            // this implementation breaks everything and idk why
-//            <a href="#" key={word.owner} style={spanStyle} onClick={handleWordClick} > 
-//                {word.text} 
-//            </a>
+            //            // this implementation breaks everything and idk why
+            //            <a href="#" key={word.owner} style={spanStyle} onClick={handleWordClick} > 
+            //                {word.text} 
+            //            </a>
             <span key={word._id} style={spanStyle} >{word.text} </span>
         );
     });
@@ -76,24 +114,81 @@ const WordList = (props) => {
     );
 };
 
-// func for rendering a specific set of words to the screen
+// React form to generate a word cloud
+const CloudForm = (props) => {
+    if(props.words.length === 0) {
+        return (
+            <form id="cloudForm" onSubmit={handleCloud} name="cloudForm">
+                <div class="form-group">
+                    <textarea id="cloudText" form="cloudForm"
+                        placeholder="paste text for word cloud here">
+                    </textarea>
+                </div>
+                <input type="submit" value="Generate Word Cloud" />
+            </form>
+        );
+    }
+
+    let wordText = props.words.map((word) => {
+        return word.text;
+    });
+
+    return (
+        <form id="cloudForm" onSubmit={handleCloud} name="cloudForm">
+                <div class="form-group">
+                    <textarea id="cloudText" form="cloudForm"
+                        placeholder="paste text for word cloud here">
+                        {wordText.join(" ")}
+                    </textarea>
+                </div>
+            <input type="submit" value="Generate Word Cloud" />
+        </form>
+    );
+};
+
+// React word cloud
+const ReactCloud = (props) => {
+    return (
+        <ReactWordcloud words={props.wordArr} />
+    );
+}
+
+// func for rendering a specific set of words to the screen & updating the wordcloud textarea
 const loadWordsFromServer = (id) => {
     sendAjax(`GET`, `/getWords`, {id: id}, (data) => {
         ReactDOM.render(
             <WordList words={data.words} />,
             document.querySelector(`#words`)
         );
+
+        ReactDOM.render(
+            <CloudForm words={data.words} />,
+            document.querySelector(`#makeCloud`)
+        ); 
     });
 };
 
-// func for rendering all words to the screen
+// func for rendering all words to the screen & updating the wordcloud textarea
 const loadAllWordsFromServer = () => {
     sendAjax(`GET`, `/getAllWords`, null, (data) => {
         ReactDOM.render(
             <WordList words={data.words} />,
             document.querySelector(`#words`)
         );
+
+        ReactDOM.render(
+            <CloudForm words={data.words} />,
+            document.querySelector(`#makeCloud`)
+        );
     });
+};
+
+// func for rendering a react word cloud
+const generateWordCloud = (wordArr) => {
+    ReactDOM.render(
+        <ReactCloud wordArr={wordArr} />,
+        document.querySelector(`#cloud`)
+    );
 };
 
 // set up all react based components for client and load the story

@@ -16,6 +16,7 @@ const makerPage = (req, res) => {
       csrfToken: req.csrfToken(),
       words: docs,
       username: req.session.account.username,
+      timeBetweenPosts: (req.session.account.timeBetweenPosts / 1000),
     });
   });
 };
@@ -47,12 +48,12 @@ const makeWord = (req, res) => {
       models.Account.AccountModel.updateOne({ username: req.session.account.username },
         { lastPosted: Date.now() }, (error) => {
           if (error) {
-          // instead send back a response if there is an error
+            // instead send back a response if there is an error
             return console.dir(error);
           }
 
           return console.dir('updated');
-        // send back a response that it was successful
+          // send back a response that it was successful
         });
 
       res.status(201).json({

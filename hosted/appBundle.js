@@ -34,6 +34,64 @@ var handleWordClick = function handleWordClick(e) {
     return false;
 };
 
+// func for handling generation of a word cloud
+var handleCloud = function handleCloud(e) {
+    e.preventDefault();
+
+    if ($("#cloudText").val() === "") {
+        handleAlert("Need to put fill the cloud!", "danger");
+        return false;
+    }
+
+    var words = $("#cloudText").val().split(" ");
+
+    var wordCloudObj = {};
+
+    var wordCloudArr = [];
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = words[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var word = _step.value;
+
+            if (wordCloudObj.word) {
+                wordCloudObj.word.value++;
+            } else {
+                wordCloudObj.word = {
+                    value: 1
+                };
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    for (var _word in wordCloudObj) {
+        wordCloudArr.push({
+            text: "" + _word,
+            value: wordCloudObj[_word].value
+        });
+    }
+
+    generateWordCloud(wordCloudArr);
+
+    return false;
+};
+
 // React form for submitting a word to the story
 var WordForm = function WordForm(props) {
     return React.createElement(
@@ -69,6 +127,7 @@ var WordList = function WordList(props) {
     }
 
     var wordNodes = props.words.map(function (word) {
+        //        console.log("adding a word");
         var spanStyle = {
             color: word.color
         };
@@ -93,18 +152,69 @@ var WordList = function WordList(props) {
     );
 };
 
-// func for rendering a specific set of words to the screen
+// React form to generate a word cloud
+var CloudForm = function CloudForm(props) {
+    if (props.words.length === 0) {
+        return React.createElement(
+            "form",
+            { id: "cloudForm", onSubmit: handleCloud, name: "cloudForm" },
+            React.createElement(
+                "div",
+                { "class": "form-group" },
+                React.createElement("textarea", { id: "cloudText", form: "cloudForm",
+                    placeholder: "paste text for word cloud here" })
+            ),
+            React.createElement("input", { type: "submit", value: "Generate Word Cloud" })
+        );
+    }
+
+    var wordText = props.words.map(function (word) {
+        return word.text;
+    });
+
+    return React.createElement(
+        "form",
+        { id: "cloudForm", onSubmit: handleCloud, name: "cloudForm" },
+        React.createElement(
+            "div",
+            { "class": "form-group" },
+            React.createElement(
+                "textarea",
+                { id: "cloudText", form: "cloudForm",
+                    placeholder: "paste text for word cloud here" },
+                wordText.join(" ")
+            )
+        ),
+        React.createElement("input", { type: "submit", value: "Generate Word Cloud" })
+    );
+};
+
+// React word cloud
+var ReactCloud = function ReactCloud(props) {
+    return React.createElement(ReactWordcloud, { words: props.wordArr });
+};
+
+// func for rendering a specific set of words to the screen & updating the wordcloud textarea
 var loadWordsFromServer = function loadWordsFromServer(id) {
     sendAjax("GET", "/getWords", { id: id }, function (data) {
         ReactDOM.render(React.createElement(WordList, { words: data.words }), document.querySelector("#words"));
+
+        ReactDOM.render(React.createElement(CloudForm, { words: data.words }), document.querySelector("#makeCloud"));
     });
 };
 
-// func for rendering all words to the screen
+// func for rendering all words to the screen & updating the wordcloud textarea
 var loadAllWordsFromServer = function loadAllWordsFromServer() {
     sendAjax("GET", "/getAllWords", null, function (data) {
         ReactDOM.render(React.createElement(WordList, { words: data.words }), document.querySelector("#words"));
+
+        ReactDOM.render(React.createElement(CloudForm, { words: data.words }), document.querySelector("#makeCloud"));
     });
+};
+
+// func for rendering a react word cloud
+var generateWordCloud = function generateWordCloud(wordArr) {
+    ReactDOM.render(React.createElement(ReactCloud, { wordArr: wordArr }), document.querySelector("#cloud"));
 };
 
 // set up all react based components for client and load the story
