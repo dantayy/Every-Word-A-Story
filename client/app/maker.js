@@ -1,3 +1,4 @@
+// IMPORTANT: need to supply ReactWordcloud script before this to get wordcloud functionality
 // users can't make words longer than this
 const maxWordLength = 30;
 
